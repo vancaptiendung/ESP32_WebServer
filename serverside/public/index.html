@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ESP32 Chat</title>
+  <meta charset="UTF-8">
+  <style>
+    body { font-family: Arial; background: #1e1e2f; color: white; text-align: center; }
+    #chat { background: #333; height: 300px; overflow-y: auto; padding: 10px; border-radius: 10px; }
+    input, button { padding: 10px; border: none; border-radius: 5px; }
+    #msg { width: 70%; }
+  </style>
+</head>
+<body>
+  <h2>💬 ESP32 Chatbox</h2>
+  <div id="chat"></div><br>
+  <input id="msg" type="text" placeholder="Type a message">
+  <button onclick="sendMsg()">Send</button>
+
+  <script>
+    const ws = new WebSocket(`ws://${location.hostname}:81/`);
+    ws.onmessage = (event) => {
+      const chat = document.getElementById('chat');
+      chat.innerHTML += event.data + '<br>';
+      chat.scrollTop = chat.scrollHeight;
+    };
+    function sendMsg() {
+      const msg = document.getElementById('msg');
+      if (msg.value.trim() !== '') {
+        ws.send(msg.value);
+        msg.value = '';
+      }
+    }
+  </script>
+</body>
+</html>
